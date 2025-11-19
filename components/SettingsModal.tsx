@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import { X, Save, RefreshCw, Settings as SettingsIcon, Key, Cpu, Globe } from 'lucide-react';
 import { Button } from './ui/Button';

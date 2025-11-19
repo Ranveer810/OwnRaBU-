@@ -1,8 +1,11 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import { Loader2, RefreshCw, Smartphone, Tablet, Monitor, Terminal } from 'lucide-react';
 import { Button } from './ui/Button';
 import { cn } from '../lib/utils';
 import { WebProject, ConsoleLog } from '../types';
+import { X } from 'lucide-react';
 
 interface PreviewFrameProps {
   project: WebProject | null;
@@ -215,6 +218,3 @@ export const PreviewFrame: React.FC<PreviewFrameProps> = ({ project, isLoading, 
     </div>
   );
 };
-
-// Fix missing X icon import
-import { X } from 'lucide-react';

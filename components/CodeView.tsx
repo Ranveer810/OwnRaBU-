@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import { Copy, Check, FileCode, FileJson, FileType } from 'lucide-react';
 import { Button } from './ui/Button';

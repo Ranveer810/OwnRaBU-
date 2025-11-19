@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAgent } from './hooks/use-agent';
 import { useProject } from './hooks/use-project';
@@ -25,35 +27,36 @@ export default function App() {
 
   // Load from LocalStorage on mount
   useEffect(() => {
-      const saved = localStorage.getItem('zenith_settings');
-      if (saved) {
-          try {
-              const parsed = JSON.parse(saved);
-              // Deep merge with defaults to ensure new fields exist if structure changed
-              setSettings({
-                  ...DEFAULT_SETTINGS,
-                  ...parsed,
-                  google: { ...DEFAULT_SETTINGS.google, ...(parsed.google || {}) },
-                  groq: { ...DEFAULT_SETTINGS.groq, ...(parsed.groq || {}) },
-                  openai: { ...DEFAULT_SETTINGS.openai, ...(parsed.openai || {}) },
-              });
-          } catch (e) {
-              console.error("Failed to parse settings", e);
+      if (typeof window !== 'undefined') {
+          const saved = localStorage.getItem('zenith_settings');
+          if (saved) {
+              try {
+                  const parsed = JSON.parse(saved);
+                  setSettings({
+                      ...DEFAULT_SETTINGS,
+                      ...parsed,
+                      google: { ...DEFAULT_SETTINGS.google, ...(parsed.google || {}) },
+                      groq: { ...DEFAULT_SETTINGS.groq, ...(parsed.groq || {}) },
+                      openai: { ...DEFAULT_SETTINGS.openai, ...(parsed.openai || {}) },
+                  });
+              } catch (e) {
+                  console.error("Failed to parse settings", e);
+              }
           }
+          setSettingsLoaded(true);
       }
-      setSettingsLoaded(true);
   }, []);
 
   const handleSaveSettings = (newSettings: LLMSettings) => {
       setSettings(newSettings);
-      localStorage.setItem('zenith_settings', JSON.stringify(newSettings));
+      if (typeof window !== 'undefined') {
+          localStorage.setItem('zenith_settings', JSON.stringify(newSettings));
+      }
   };
 
   // --- Project & Agent ---
   const projectManager = useProject();
   const { project: latestProject } = projectManager;
-  
-  // Clear logs when project changes significantly? Maybe not, keep history.
   
   const { messages, input, handleInputChange, handleSubmit, stopGeneration, isLoading } = useAgent(projectManager, settings, consoleLogs);
   

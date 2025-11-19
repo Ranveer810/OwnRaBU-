@@ -16,11 +16,15 @@ export function extractCodeBlock(content: string): string | null {
 }
 
 export async function downloadProjectAsZip(project: any) {
-  const JSZip = (window as any).JSZip;
-  if (!JSZip) { 
-    console.error("JSZip not loaded"); 
-    alert("Download library not ready yet. Please try again in a moment.");
-    return; 
+  // Dynamic import for JSZip to avoid SSR issues in Next.js
+  let JSZip;
+  try {
+    const module = await import('jszip');
+    JSZip = module.default;
+  } catch (e) {
+    console.error("Failed to load JSZip", e);
+    alert("Download library could not be loaded.");
+    return;
   }
   
   try {

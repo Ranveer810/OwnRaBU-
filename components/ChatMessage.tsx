@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 import { Message, Sender, ToolInvocation, MessagePart } from '../types';
 import { cn } from '../lib/utils';

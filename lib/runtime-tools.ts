@@ -1,4 +1,5 @@
 import { WebProject } from '../types';
+import html2canvas from 'html2canvas';
 
 /**
  * Captures a screenshot of the current project state by rendering it into a hidden container.
@@ -32,10 +33,6 @@ export const takeScreenshot = async (project: WebProject): Promise<{ status: str
 
         // Small delay to let styles apply and fonts load
         await new Promise(resolve => setTimeout(resolve, 500));
-
-        // Capture
-        const html2canvas = (window as any).html2canvas;
-        if (!html2canvas) throw new Error("html2canvas library not loaded");
 
         const canvas = await html2canvas(container, {
             useCORS: true,
