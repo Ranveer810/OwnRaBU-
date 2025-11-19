@@ -1,5 +1,5 @@
-import App from "../App";
+import ZenithApp from "../components/ZenithApp";
 
 export default function Home() {
-  return <App />;
+  return <ZenithApp />;
 }
