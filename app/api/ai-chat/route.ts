@@ -30,17 +30,28 @@ export async function POST(req: Request) {
   const modelId = settings?.[provider]?.model || 'gemini-1.5-flash';
 
   let model;
+  
   if (provider === 'google') {
-    model = google(modelId, { apiKey });
+    // For Google, create provider instance first
+    const googleProvider = google.generativeAI({
+      apiKey: apiKey || process.env.GOOGLE_API_KEY || '',
+    });
+    model = googleProvider(modelId);
   } else if (provider === 'openai') {
-    model = openai(modelId, { apiKey });
+    model = openai(modelId, { 
+      apiKey: apiKey || process.env.OPENAI_API_KEY 
+    });
   } else if (provider === 'groq') {
     model = openai(modelId, {
-      apiKey,
+      apiKey: apiKey || process.env.GROQ_API_KEY,
       baseURL: 'https://api.groq.com/openai/v1',
     });
   } else {
-    model = google('gemini-1.5-flash');
+    // Default fallback
+    const googleProvider = google.generativeAI({
+      apiKey: process.env.GOOGLE_API_KEY || '',
+    });
+    model = googleProvider('gemini-1.5-flash');
   }
 
   const result = await streamText({
