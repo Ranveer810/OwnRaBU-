@@ -59,7 +59,7 @@ export async function POST(req: Request) {
       read_files: tool({
         description: 'Read the full content of the current project files.',
         parameters: z.object({}),
-        execute: async () => {
+        execute: () => {
           return {
             status: 'success',
             message: 'Files read successfully',
@@ -73,7 +73,7 @@ export async function POST(req: Request) {
           target: z.enum(['html', 'css', 'javascript']),
           content: z.string(),
         }),
-        execute: async ({ target, content }) => {
+        execute: ({ target, content }) => {
           return {
             status: 'success',
             message: `Updated ${target} file`,
@@ -87,7 +87,7 @@ export async function POST(req: Request) {
           search_string: z.string(),
           replacement_string: z.string(),
         }),
-        execute: async ({ target, search_string, replacement_string }) => {
+        execute: ({ target, search_string, replacement_string }) => {
           return {
             status: 'success',
             message: `Patched ${target} file`,
@@ -97,7 +97,7 @@ export async function POST(req: Request) {
       screenshot_website: tool({
         description: 'Take a visual screenshot of the current rendered website',
         parameters: z.object({}),
-        execute: async () => {
+        execute: () => {
           return {
             status: 'success',
             message: 'Screenshot captured',
@@ -109,7 +109,7 @@ export async function POST(req: Request) {
         parameters: z.object({
           test_script: z.string(),
         }),
-        execute: async ({ test_script }) => {
+        execute: ({ test_script }) => {
           return {
             status: 'success',
             message: 'Test executed',
@@ -119,7 +119,7 @@ export async function POST(req: Request) {
       read_console_logs: tool({
         description: 'Read the browser console logs',
         parameters: z.object({}),
-        execute: async () => {
+        execute: () => {
           return {
             status: 'success',
             logs: consoleLogs || [],
