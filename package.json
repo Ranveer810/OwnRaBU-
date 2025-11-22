@@ -10,8 +10,9 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@vercel/ai": "^2.1.0",
-    "@google/genai": "^1.30.0",
+    "ai": "^3.4.32",
+    "@ai-sdk/google": "^1.0.9",
+    "@ai-sdk/openai": "^1.0.8",
     "clsx": "^2.1.0",
     "framer-motion": "^11.0.8",
     "html2canvas": "^1.4.1",
