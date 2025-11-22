@@ -1,4 +1,4 @@
-import { google } from '@ai-sdk/google';
+import { google, createGoogleGenerativeAI } from '@ai-sdk/google';
 import { openai } from '@ai-sdk/openai';
 import { streamText, tool } from 'ai';
 import { z } from 'zod';
@@ -32,9 +32,9 @@ export async function POST(req: Request) {
   let model;
   
   if (provider === 'google') {
-    // For Google, create provider instance first
-    const googleProvider = google.generativeAI({
-      apiKey: apiKey || process.env.GOOGLE_API_KEY || '',
+    // Correct way: use createGoogleGenerativeAI for custom API key
+    const googleProvider = createGoogleGenerativeAI({
+      apiKey: apiKey || process.env.GOOGLE_GENERATIVE_AI_API_KEY || '',
     });
     model = googleProvider(modelId);
   } else if (provider === 'openai') {
@@ -47,11 +47,8 @@ export async function POST(req: Request) {
       baseURL: 'https://api.groq.com/openai/v1',
     });
   } else {
-    // Default fallback
-    const googleProvider = google.generativeAI({
-      apiKey: process.env.GOOGLE_API_KEY || '',
-    });
-    model = googleProvider('gemini-1.5-flash');
+    // Default fallback to standard google() with env variable
+    model = google(modelId);
   }
 
   const result = await streamText({
