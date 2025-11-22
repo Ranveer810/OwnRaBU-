@@ -12,21 +12,17 @@ import { Send, Code as CodeIcon, Eye, Sparkles, Settings as SettingsIcon, Downlo
 import { cn, downloadProjectAsZip } from '../lib/utils';
 import { LLMSettings, DEFAULT_SETTINGS, ConsoleLog } from '../types';
 
-const MAX_CONSOLE_LOGS = 1000; // Prevent memory leak
+const MAX_CONSOLE_LOGS = 1000;
 
 export default function ZenithApp() {
-  // --- Settings Management ---
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [settings, setSettings] = useState<LLMSettings>(DEFAULT_SETTINGS);
   const [settingsLoaded, setSettingsLoaded] = useState(false);
-
-  // --- Console Logs State ---
   const [consoleLogs, setConsoleLogs] = useState<ConsoleLog[]>([]);
 
   const addLog = useCallback((log: ConsoleLog) => {
       setConsoleLogs(prev => {
         const newLogs = [...prev, log];
-        // Keep only last MAX_CONSOLE_LOGS entries
         if (newLogs.length > MAX_CONSOLE_LOGS) {
           return newLogs.slice(-MAX_CONSOLE_LOGS);
         }
@@ -34,7 +30,6 @@ export default function ZenithApp() {
       });
   }, []);
 
-  // Load from LocalStorage on mount
   useEffect(() => {
       if (typeof window !== 'undefined') {
           const saved = localStorage.getItem('zenith_settings');
@@ -63,7 +58,6 @@ export default function ZenithApp() {
       }
   };
 
-  // --- Project & Agent ---
   const projectManager = useProject();
   const { project: latestProject } = projectManager;
   
@@ -71,12 +65,9 @@ export default function ZenithApp() {
   
   const [activeTab, setActiveTab] = useState<'preview' | 'code'>('preview');
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
-
-  // Resizable Sidebar State
   const [sidebarWidth, setSidebarWidth] = useState(400);
   const [isResizing, setIsResizing] = useState(false);
 
-  // Auto-scroll
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -85,7 +76,6 @@ export default function ZenithApp() {
     if (latestProject) setActiveTab('preview');
   }, [latestProject]);
 
-  // Resizing Logic
   const startResizing = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     setIsResizing(true);
@@ -122,17 +112,15 @@ export default function ZenithApp() {
     };
   }, [isResizing, resize, stopResizing]);
 
-  // --- Loading State ---
   if (!settingsLoaded) return <div className="h-screen bg-zinc-950 text-white flex items-center justify-center">Loading...</div>;
 
-  // Check key for the CURRENTLY SELECTED provider
   const isApiKeyMissing = !settings[settings.selectedProvider]?.apiKey;
 
   return (
     <div className="flex h-screen w-full bg-zinc-950 text-zinc-50 font-sans overflow-hidden selection:bg-primary/20">
       
       <SettingsModal 
-         isOpen={isSettingsOpen || isApiKeyMissing} // Force open if missing key
+         isOpen={isSettingsOpen || isApiKeyMissing}
          onClose={() => setIsSettingsOpen(false)} 
          settings={settings}
          onSave={handleSaveSettings}
@@ -142,12 +130,10 @@ export default function ZenithApp() {
         <div className="fixed inset-0 z-[9999] bg-transparent cursor-col-resize" style={{ pointerEvents: 'all' }} />
       )}
 
-      {/* Resizable Sidebar */}
       <div 
         style={{ width: sidebarWidth }}
         className="flex flex-col border-r border-border bg-zinc-950/50 backdrop-blur-xl z-10 shrink-0 relative"
       >
-        {/* Header */}
         <div className="h-14 shrink-0 border-b border-border flex items-center justify-between px-4 bg-zinc-950/80">
           <div className="flex items-center gap-2">
              <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
@@ -160,7 +146,6 @@ export default function ZenithApp() {
           </Button>
         </div>
 
-        {/* Messages */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth min-h-0">
           {messages.map((msg) => (
             <ChatMessage key={msg.id} message={msg} />
@@ -177,7 +162,6 @@ export default function ZenithApp() {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input */}
         <div className="p-4 border-t border-border bg-zinc-950 shrink-0">
           <form onSubmit={handleSubmit} className="relative">
             <input
@@ -216,7 +200,6 @@ export default function ZenithApp() {
         </div>
       </div>
 
-      {/* Resizer */}
       <div 
         className={cn(
             "w-1 hover:w-2 -ml-0.5 z-50 cursor-col-resize flex items-center justify-center transition-all bg-border hover:bg-primary",
@@ -225,7 +208,6 @@ export default function ZenithApp() {
         onMouseDown={startResizing}
       ></div>
 
-      {/* Main Area */}
       <div className="flex-1 flex flex-col min-w-0 bg-[#050505] relative overflow-hidden">
          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-zinc-900/20 via-zinc-950 to-zinc-950 pointer-events-none" />
          
