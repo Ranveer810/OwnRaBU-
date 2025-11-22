@@ -1,7 +1,7 @@
+// --- UPDATED ChatMessage.tsx for Vercel AI SDK native message compatibility ---
 "use client";
 
 import React from 'react';
-import { Message, Sender, ToolInvocation, MessagePart } from '../types';
 import { cn } from '../lib/utils';
 import { Bot, User } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
@@ -14,17 +14,19 @@ import {
     ToolState 
 } from './ui/ToolUI';
 
+// Accept any message structure compatible with AI SDK
 interface ChatMessageProps {
-  message: Message;
+  message: any;
 }
 
 export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
-  const isUser = message.role === Sender.USER;
-  const isSystem = message.role === Sender.SYSTEM;
+  // SDK's role is just a string
+  const isUser = message.role === 'user';
+  const isSystem = message.role === 'system';
 
   if (isSystem) return null;
 
-  const getToolState = (tool: ToolInvocation): ToolState => {
+  const getToolState = (tool: any): ToolState => {
       if (tool.result) {
           if (tool.result.status === 'error') {
               return 'output-error';
@@ -36,7 +38,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
 
   // Helper to render a text bubble
   const renderTextBubble = (content: string, index: number) => {
-      if (!content.trim()) return null;
+      if (!content || !content.trim()) return null;
       
       return (
         <div key={`text-${index}`} className={cn(
@@ -71,17 +73,17 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
       );
   };
 
-  // Helper to render a tool card
-  const renderToolCard = (tool: ToolInvocation, index: number) => {
+  // Helper to render tool or attachments
+  const renderToolCard = (tool: any, index: number) => {
       const state = getToolState(tool);
       // Keep collapsed by default
       const defaultOpen = false; 
 
       return (
-        <div key={`tool-${tool.toolCallId}-${index}`} className="w-full max-w-[500px] animate-in zoom-in-95 duration-300">
+        <div key={`tool-${tool.toolCallId || index}-${index}`} className="w-full max-w-[500px] animate-in zoom-in-95 duration-300">
             <Tool defaultOpen={defaultOpen}>
                 <ToolHeader 
-                    toolName={tool.toolName} 
+                    toolName={tool.toolName || tool.type} 
                     state={state} 
                 />
                 <ToolContent>
@@ -96,19 +98,19 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
       );
   };
 
-  // Main Render Logic: Iterate over Parts
+  // Main Render Logic: Iterate AI SDK parts robustly
   const renderParts = () => {
-      // Fallback for legacy messages that don't have 'parts'
-      if (!message.parts) {
+      if (!message.parts || !Array.isArray(message.parts)) {
           return renderTextBubble(message.content, 0);
       }
 
-      return message.parts.map((part, index) => {
-          if (part.type === 'text') {
+      return message.parts.map((part: any, index: number) => {
+          if (part.type === 'text' && part.text) {
               return renderTextBubble(part.text, index);
-          } else if (part.type === 'tool-invocation') {
+          } else if (part.type === 'tool-invocation' && part.toolInvocation) {
               return renderToolCard(part.toolInvocation, index);
           }
+          // Ignore unknown part types, handle others gracefully
           return null;
       });
   };
