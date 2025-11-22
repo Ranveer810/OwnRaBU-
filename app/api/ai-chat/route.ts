@@ -126,8 +126,8 @@ export async function POST(req: Request) {
           };
         },
       }),
-    },
-    maxSteps: 5,
+    }
+    // कोई roundtrip लिमिट property नहीं
   });
 
   return result.toDataStreamResponse();
