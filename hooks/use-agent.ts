@@ -1,4 +1,4 @@
-import { useChat } from 'ai/react';
+import { useChat } from '@ai-sdk/react';
 import { useCallback } from 'react';
 
 export function useAgent(projectManager: any, settings: any, consoleLogs: any) {
