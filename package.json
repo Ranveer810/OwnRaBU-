@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "ai": "^3.4.32",
-    "@ai-sdk/google": "^3.4.32",
-    "@ai-sdk/openai": "^3.4.32",
+    "@ai-sdk/google": "^2.0.31",
+    "@ai-sdk/openai": "^2.0.65",
     "clsx": "^2.1.0",
     "framer-motion": "^11.0.8",
     "html2canvas": "^1.4.1",
