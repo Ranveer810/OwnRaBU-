@@ -3,7 +3,8 @@ import { z } from 'zod';
 export enum Sender {
   USER = 'user',
   ASSISTANT = 'assistant',
-  SYSTEM = 'system'
+  SYSTEM = 'system',
+  DATA = 'data'
 }
 
 export interface WebProject {
@@ -25,10 +26,10 @@ export type MessagePart =
 
 export interface Message {
   id: string;
-  role: Sender;
+  role: string;
   content: string;
   parts?: MessagePart[];
-  timestamp: number;
+  timestamp?: number;
   project?: WebProject; 
 }
 
