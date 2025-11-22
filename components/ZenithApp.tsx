@@ -12,6 +12,8 @@ import { Send, Code as CodeIcon, Eye, Sparkles, Settings as SettingsIcon, Downlo
 import { cn, downloadProjectAsZip } from '../lib/utils';
 import { LLMSettings, DEFAULT_SETTINGS, ConsoleLog } from '../types';
 
+const MAX_CONSOLE_LOGS = 1000; // Prevent memory leak
+
 export default function ZenithApp() {
   // --- Settings Management ---
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -22,7 +24,14 @@ export default function ZenithApp() {
   const [consoleLogs, setConsoleLogs] = useState<ConsoleLog[]>([]);
 
   const addLog = useCallback((log: ConsoleLog) => {
-      setConsoleLogs(prev => [...prev, log]);
+      setConsoleLogs(prev => {
+        const newLogs = [...prev, log];
+        // Keep only last MAX_CONSOLE_LOGS entries
+        if (newLogs.length > MAX_CONSOLE_LOGS) {
+          return newLogs.slice(-MAX_CONSOLE_LOGS);
+        }
+        return newLogs;
+      });
   }, []);
 
   // Load from LocalStorage on mount
