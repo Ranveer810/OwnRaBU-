@@ -127,7 +127,7 @@ export async function POST(req: Request) {
         },
       }),
     },
-    maxToolRoundtrips: 5,
+    maxSteps: 5,
   });
 
   return result.toDataStreamResponse();
