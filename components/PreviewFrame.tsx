@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Loader2, RefreshCw, Smartphone, Tablet, Monitor, Terminal } from 'lucide-react';
 import { Button } from './ui/Button';
 import { cn } from '../lib/utils';
@@ -18,6 +18,13 @@ export const PreviewFrame: React.FC<PreviewFrameProps> = ({ project, isLoading, 
   const [viewMode, setViewMode] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   const [showConsole, setShowConsole] = useState(false);
   const [key, setKey] = useState(0);
+  
+  // Use ref to avoid recreating event listener on every render
+  const onLogRef = useRef(onLog);
+  
+  useEffect(() => {
+    onLogRef.current = onLog;
+  }, [onLog]);
 
   // Function to combine separate files into one HTML string for the iframe
   const generateSrcDoc = (proj: WebProject) => {
@@ -82,7 +89,7 @@ export const PreviewFrame: React.FC<PreviewFrameProps> = ({ project, isLoading, 
   useEffect(() => {
       const handler = (event: MessageEvent) => {
           if (event.data && event.data.type === 'CONSOLE_LOG') {
-              onLog({
+              onLogRef.current({
                   type: event.data.logType,
                   message: event.data.message,
                   timestamp: Date.now()
@@ -91,7 +98,7 @@ export const PreviewFrame: React.FC<PreviewFrameProps> = ({ project, isLoading, 
       };
       window.addEventListener('message', handler);
       return () => window.removeEventListener('message', handler);
-  }, [onLog]);
+  }, []); // No dependencies - stable event listener
 
   const srcDoc = project ? generateSrcDoc(project) : '';
 
