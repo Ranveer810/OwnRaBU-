@@ -1,4 +1,4 @@
-// ---this is ZenithApp.tsx with message timestamp fix---
+// FINAL ZENITHAPP UPDATE for SDK-native messages
 "use client";
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -149,7 +149,7 @@ export default function ZenithApp() {
 
         <div className="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth min-h-0">
           {messages.map((msg) => (
-            <ChatMessage key={msg.id} message={{ ...msg, timestamp: msg.timestamp ?? Date.now() }} />
+            <ChatMessage key={msg.id} message={msg} />
           ))}
           {isLoading && (
             <div className="flex w-full gap-3 p-4 animate-pulse">
