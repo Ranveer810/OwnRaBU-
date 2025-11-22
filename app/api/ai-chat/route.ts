@@ -1,5 +1,5 @@
 import { google, createGoogleGenerativeAI } from '@ai-sdk/google';
-import { openai } from '@ai-sdk/openai';
+import { openai, createOpenAI } from '@ai-sdk/openai';
 import { streamText, tool } from 'ai';
 import { z } from 'zod';
 
@@ -32,22 +32,22 @@ export async function POST(req: Request) {
   let model;
   
   if (provider === 'google') {
-    // Correct way: use createGoogleGenerativeAI for custom API key
     const googleProvider = createGoogleGenerativeAI({
       apiKey: apiKey || process.env.GOOGLE_GENERATIVE_AI_API_KEY || '',
     });
     model = googleProvider(modelId);
   } else if (provider === 'openai') {
-    model = openai(modelId, { 
-      apiKey: apiKey || process.env.OPENAI_API_KEY 
+    const openaiProvider = createOpenAI({
+      apiKey: apiKey || process.env.OPENAI_API_KEY || '',
     });
+    model = openaiProvider(modelId);
   } else if (provider === 'groq') {
-    model = openai(modelId, {
-      apiKey: apiKey || process.env.GROQ_API_KEY,
+    const groqProvider = createOpenAI({
+      apiKey: apiKey || process.env.GROQ_API_KEY || '',
       baseURL: 'https://api.groq.com/openai/v1',
     });
+    model = groqProvider(modelId);
   } else {
-    // Default fallback to standard google() with env variable
     model = google(modelId);
   }
 
