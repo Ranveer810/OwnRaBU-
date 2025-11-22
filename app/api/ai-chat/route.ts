@@ -58,8 +58,8 @@ export async function POST(req: Request) {
     tools: {
       read_files: tool({
         description: 'Read the full content of the current project files.',
-        parameters: z.object({}),
-        execute: () => {
+        inputSchema: z.object({}),
+        async execute() {
           return {
             status: 'success',
             message: 'Files read successfully',
@@ -69,11 +69,11 @@ export async function POST(req: Request) {
       }),
       update_file: tool({
         description: 'Completely replace the content of a single file',
-        parameters: z.object({
+        inputSchema: z.object({
           target: z.enum(['html', 'css', 'javascript']),
           content: z.string(),
         }),
-        execute: ({ target, content }) => {
+        async execute({ target, content }) {
           return {
             status: 'success',
             message: `Updated ${target} file`,
@@ -82,12 +82,12 @@ export async function POST(req: Request) {
       }),
       patch_file: tool({
         description: 'Replace a specific segment of code within a file',
-        parameters: z.object({
+        inputSchema: z.object({
           target: z.enum(['html', 'css', 'javascript']),
           search_string: z.string(),
           replacement_string: z.string(),
         }),
-        execute: ({ target, search_string, replacement_string }) => {
+        async execute({ target, search_string, replacement_string }) {
           return {
             status: 'success',
             message: `Patched ${target} file`,
@@ -96,8 +96,8 @@ export async function POST(req: Request) {
       }),
       screenshot_website: tool({
         description: 'Take a visual screenshot of the current rendered website',
-        parameters: z.object({}),
-        execute: () => {
+        inputSchema: z.object({}),
+        async execute() {
           return {
             status: 'success',
             message: 'Screenshot captured',
@@ -106,10 +106,10 @@ export async function POST(req: Request) {
       }),
       validate_functionality: tool({
         description: 'Execute a JavaScript test script against the current website',
-        parameters: z.object({
+        inputSchema: z.object({
           test_script: z.string(),
         }),
-        execute: ({ test_script }) => {
+        async execute({ test_script }) {
           return {
             status: 'success',
             message: 'Test executed',
@@ -118,8 +118,8 @@ export async function POST(req: Request) {
       }),
       read_console_logs: tool({
         description: 'Read the browser console logs',
-        parameters: z.object({}),
-        execute: () => {
+        inputSchema: z.object({}),
+        async execute() {
           return {
             status: 'success',
             logs: consoleLogs || [],
